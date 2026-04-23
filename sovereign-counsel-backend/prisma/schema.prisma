@@ -1,0 +1,532 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+  ARCHIVED
+}
+
+enum MatterStatus {
+  DRAFT
+  OPEN
+  ON_HOLD
+  CLOSED
+  ARCHIVED
+}
+
+enum MatterPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum BillingStatus {
+  PENDING
+  IN_PROGRESS
+  READY_TO_INVOICE
+  INVOICED
+  PAID
+}
+
+enum MatterVisibilityLevel {
+  PRIVATE
+  TEAM
+  ORG
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED
+  COMPLETED
+  CANCELLED
+}
+
+enum HearingStatus {
+  SCHEDULED
+  ADJOURNED
+  COMPLETED
+  CANCELLED
+}
+
+enum DocumentVisibility {
+  INTERNAL
+  CLIENT_SHARED
+  RESTRICTED
+}
+
+enum ActivityType {
+  MATTER_CREATED
+  STATUS_UPDATED
+  COMMENT_ADDED
+  TASK_CREATED
+  DOCUMENT_UPLOADED
+  HEARING_SCHEDULED
+  BILLING_ADDED
+  NOTE_ADDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  VOID
+}
+
+enum NotificationType {
+  DEADLINE
+  MENTION
+  ASSIGNMENT
+  SYSTEM
+}
+
+model Organization {
+  id                String            @id @default(uuid())
+  name              String
+  legalName         String?
+  gstNumber         String?
+  timezone          String            @default("Asia/Kolkata")
+  isActive          Boolean           @default(true)
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  users             User[]
+  roles             Role[]
+  matters           Matter[]
+  clients           Client[]
+  tasks             Task[]
+  hearings          Hearing[]
+  folders           DocumentFolder[]
+  documents         Document[]
+  billingEntries    BillingEntry[]
+  invoices          Invoice[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  refreshTokens     RefreshToken[]
+  invites           Invite[]
+
+  @@index([name])
+}
+
+model User {
+  id                     String          @id @default(uuid())
+  organizationId         String
+  roleId                 String
+  firstName              String
+  lastName               String
+  email                  String
+  phone                  String?
+  passwordHash           String
+  status                 UserStatus      @default(ACTIVE)
+  twoFactorEnabled       Boolean         @default(false)
+  twoFactorSecret        String?
+  lastLoginAt            DateTime?
+  passwordResetTokenHash String?
+  passwordResetTokenExp  DateTime?
+  metadata               Json?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  organization           Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  role                   Role            @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  createdMatters         Matter[]        @relation("MatterCreator")
+  assignedMatters        MatterAssignee[]
+  createdTasks           Task[]          @relation("TaskCreator")
+  assignedTasks          TaskAssignee[]
+  billingEntries         BillingEntry[]
+  notifications          Notification[]
+  refreshTokens          RefreshToken[]
+  activities             MatterActivity[]
+  audits                 AuditLog[]
+  uploadedDocuments      Document[]      @relation("DocumentUploader")
+  matterAssignments      MatterAssignment[]
+  matterShares           MatterShare[]
+
+  @@unique([organizationId, email])
+  @@index([organizationId, roleId])
+}
+
+model Role {
+  id             String         @id @default(uuid())
+  organizationId String
+  name           String
+  isSystemRole   Boolean        @default(false)
+  permissions    Json
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  users          User[]
+  invites        Invite[]
+
+  @@unique([organizationId, name])
+}
+
+model Client {
+  id                String       @id @default(uuid())
+  organizationId    String
+  name              String
+  email             String?
+  phone             String?
+  companyName       String?
+  address           String?
+  notes             String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  matters           Matter[]
+  invoices          Invoice[]
+
+  @@index([organizationId, name])
+}
+
+model Matter {
+  id                String            @id @default(uuid())
+  organizationId    String
+  clientId          String?
+  createdById       String
+  title             String
+  matterTitle       String?
+  clientName        String?
+  description       String?
+  status            MatterStatus      @default(DRAFT)
+  priority          MatterPriority    @default(MEDIUM)
+  practiceArea      String
+  court             String?
+  nextHearingDate   DateTime?
+  nextDeadline      DateTime?
+  billingStatus     BillingStatus     @default(PENDING)
+  visibilityLevel   MatterVisibilityLevel @default(PRIVATE)
+  teamId            String?
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  client            Client?           @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  createdBy         User              @relation("MatterCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  assignees         MatterAssignee[]
+  assignments       MatterAssignment[]
+  sharedWith        MatterShare[]
+  activities        MatterActivity[]
+  tasks             Task[]
+  hearings          Hearing[]
+  folders           DocumentFolder[]
+  documents         Document[]
+  billingEntries    BillingEntry[]
+  invoices          Invoice[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, practiceArea])
+  @@index([clientId])
+}
+
+model MatterAssignee {
+  matterId          String
+  userId            String
+  assignedAt        DateTime          @default(now())
+
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([matterId, userId])
+}
+
+model MatterAssignment {
+  id                String            @id @default(uuid())
+  matterId          String
+  userId            String
+  role              String?
+  assignedAt        DateTime          @default(now())
+
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([matterId, userId])
+  @@index([userId, assignedAt])
+}
+
+model MatterShare {
+  id                String            @id @default(uuid())
+  matterId          String
+  userId            String
+  createdAt         DateTime          @default(now())
+
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([matterId, userId])
+  @@index([userId, createdAt])
+}
+
+model Invite {
+  id                String            @id @default(uuid())
+  organizationId    String
+  roleId            String
+  email             String
+  token             String            @unique
+  expiresAt         DateTime
+  createdAt         DateTime          @default(now())
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role              Role              @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, email])
+  @@index([expiresAt])
+}
+
+model MatterActivity {
+  id                String            @id @default(uuid())
+  matterId          String
+  userId            String?
+  activityType      ActivityType
+  title             String
+  description       String?
+  payload           Json?
+  createdAt         DateTime          @default(now())
+
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  user              User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([matterId, createdAt])
+}
+
+model Task {
+  id                String            @id @default(uuid())
+  organizationId    String
+  matterId          String
+  createdById       String
+  title             String
+  description       String?
+  status            TaskStatus        @default(TODO)
+  dueDate           DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  createdBy         User              @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  assignees         TaskAssignee[]
+
+  @@index([organizationId, status])
+  @@index([matterId, dueDate])
+}
+
+model TaskAssignee {
+  taskId            String
+  userId            String
+  assignedAt        DateTime          @default(now())
+
+  task              Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, userId])
+}
+
+model Hearing {
+  id                String            @id @default(uuid())
+  organizationId    String
+  matterId          String
+  title             String
+  forum             String?
+  hearingDate       DateTime
+  status            HearingStatus     @default(SCHEDULED)
+  notes             String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, hearingDate])
+  @@index([matterId])
+}
+
+model DocumentFolder {
+  id                String            @id @default(uuid())
+  organizationId    String
+  matterId          String
+  parentId          String?
+  name              String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  parent            DocumentFolder?   @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children          DocumentFolder[]  @relation("FolderHierarchy")
+  documents         Document[]
+
+  @@unique([matterId, parentId, name])
+  @@index([organizationId, matterId])
+}
+
+model Document {
+  id                String             @id @default(uuid())
+  organizationId    String
+  matterId          String
+  folderId          String?
+  uploadedById      String
+  title             String
+  fileName          String
+  mimeType          String
+  sizeBytes         Int
+  storageKey        String
+  visibility        DocumentVisibility @default(INTERNAL)
+  currentVersion    Int                @default(1)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  matter            Matter             @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  folder            DocumentFolder?    @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  uploadedBy        User               @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: Restrict)
+  versions          DocumentVersion[]
+
+  @@index([organizationId, matterId])
+  @@index([storageKey])
+}
+
+model DocumentVersion {
+  id                String            @id @default(uuid())
+  documentId        String
+  version           Int
+  fileName          String
+  mimeType          String
+  sizeBytes         Int
+  storageKey        String
+  uploadedAt        DateTime          @default(now())
+
+  document          Document          @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, version])
+}
+
+model BillingEntry {
+  id                String            @id @default(uuid())
+  organizationId    String
+  matterId          String
+  userId            String
+  description       String
+  durationMinutes   Int
+  hourlyRate        Decimal           @db.Decimal(10, 2)
+  amount            Decimal           @db.Decimal(12, 2)
+  billableDate      DateTime
+  isInvoiced        Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Restrict)
+  invoiceItems      InvoiceItem[]
+
+  @@index([organizationId, billableDate])
+  @@index([matterId])
+}
+
+model Invoice {
+  id                String            @id @default(uuid())
+  organizationId    String
+  matterId          String
+  clientId          String
+  invoiceNumber     String
+  issueDate         DateTime
+  dueDate           DateTime
+  subtotal          Decimal           @db.Decimal(12, 2)
+  taxAmount         Decimal           @db.Decimal(12, 2)
+  totalAmount       Decimal           @db.Decimal(12, 2)
+  status            InvoiceStatus     @default(DRAFT)
+  notes             String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  matter            Matter            @relation(fields: [matterId], references: [id], onDelete: Restrict)
+  client            Client            @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  items             InvoiceItem[]
+
+  @@unique([organizationId, invoiceNumber])
+  @@index([organizationId, status])
+  @@index([matterId])
+}
+
+model InvoiceItem {
+  id                String            @id @default(uuid())
+  invoiceId         String
+  billingEntryId    String?
+  description       String
+  quantity          Decimal           @db.Decimal(10, 2)
+  unitPrice         Decimal           @db.Decimal(12, 2)
+  amount            Decimal           @db.Decimal(12, 2)
+
+  invoice           Invoice           @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  billingEntry      BillingEntry?     @relation(fields: [billingEntryId], references: [id], onDelete: SetNull)
+}
+
+model Notification {
+  id                String            @id @default(uuid())
+  organizationId    String
+  userId            String
+  type              NotificationType
+  title             String
+  message           String
+  readStatus        Boolean           @default(false)
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readStatus])
+  @@index([organizationId])
+}
+
+model RefreshToken {
+  id                String            @id @default(uuid())
+  organizationId    String
+  userId            String
+  tokenHash         String
+  userAgent         String?
+  ipAddress         String?
+  expiresAt         DateTime
+  revokedAt         DateTime?
+  createdAt         DateTime          @default(now())
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model AuditLog {
+  id                String            @id @default(uuid())
+  organizationId    String
+  userId            String?
+  action            String
+  entity            String
+  entityId          String?
+  metadata          Json?
+  ipAddress         String?
+  userAgent         String?
+  createdAt         DateTime          @default(now())
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user              User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([entity, entityId])
+}

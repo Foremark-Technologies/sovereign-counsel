@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#05080f">
+    <title>Sovereign Counsel — Legal Operations Platform</title>
+    <meta name="description" content="The elite legal operations platform for modern law firms. Case tracking, deadlines, documents, billing, and client portal — in one system.">
+
+    <!-- Favicon (inline SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a1020'/><text x='16' y='21' font-family='Inter,sans-serif' font-size='13' font-weight='800' fill='white' text-anchor='middle' letter-spacing='-0.04em'>SC</text></svg>">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <!-- Fonts: Inter (primary) + JetBrains Mono (data) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;550;600;650;700;750;800;850&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+
+    <!-- React 18 -->
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+
+    <!-- PropTypes (required by Recharts UMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/prop-types@15.8.1/prop-types.min.js"></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.6/babel.min.js"></script>
+
+    <!-- Recharts -->
+    <script src="https://cdn.jsdelivr.net/npm/recharts@2.10.3/umd/Recharts.min.js"></script>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <!-- v6.1 Launch-grade polish overlay -->
+    <link rel="stylesheet" href="css/polish.css">
+    <!-- v6.2 Elite refinement -->
+    <link rel="stylesheet" href="css/elite.css">
+    <!-- v6.3 Final elite pass -->
+    <link rel="stylesheet" href="css/v63.css">
+    <!-- Mobile responsive pass (wins cascade over desktop layers, mobile-only fixes) -->
+    <link rel="stylesheet" href="css/mobile.css">
+    <!-- v6.4 Final production pass (loaded LAST — ship-grade QA layer) -->
+    <link rel="stylesheet" href="css/v64-final.css">
+
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    navy: {
+                        50: '#eef2f9', 100: '#d7dfef', 200: '#b6c4dd', 300: '#8b9fc2',
+                        400: '#5e76a6', 500: '#3b5280', 600: '#293a5e', 700: '#1c2846',
+                        800: '#141c33', 900: '#0a1020', 950: '#05080f',
+                    },
+                    graphite: {
+                        50: '#f4f5f7', 100: '#e5e6ea', 200: '#c9cbd1', 300: '#a6a8b0',
+                        400: '#82848d', 500: '#63656e', 600: '#4b4d56', 700: '#363840',
+                        800: '#27282d', 850: '#1d1e22', 900: '#17181b', 950: '#0e0f11',
+                    },
+                    surface: {
+                        0: '#ffffff', 1: '#fbfbfc', 2: '#f6f7f9', 3: '#eff1f4', 4: '#e6e8ec', 5: '#dcdee3',
+                    },
+                },
+                fontFamily: {
+                    sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+                },
+                boxShadow: {
+                    'elevated': '0 1px 2px rgba(10,16,32,0.04), 0 4px 8px rgba(10,16,32,0.04), 0 12px 24px -4px rgba(10,16,32,0.06)',
+                    'hero': '0 2px 4px rgba(10,16,32,0.04), 0 16px 32px -8px rgba(10,16,32,0.08), 0 32px 64px -16px rgba(10,16,32,0.10)',
+                },
+            },
+        },
+    };
+    </script>
+
+    <!-- Splash to avoid FOUC -->
+    <style>
+        html, body { background: #f6f7f9; }
+        #root:empty::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+              radial-gradient(ellipse at center, #ffffff 0%, #f6f7f9 70%);
+        }
+        #root:empty::after {
+            content: '';
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 34px; height: 34px;
+            margin: -17px 0 0 -17px;
+            border: 2.5px solid rgba(10,16,32,0.1);
+            border-top-color: rgba(10,16,32,0.6);
+            border-radius: 50%;
+            animation: splashSpin 0.7s linear infinite;
+        }
+        @keyframes splashSpin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Data -->
+    <script src="js/mockData.js"></script>
+
+    <!-- Application -->
+    <script type="text/babel" data-type="module" src="js/app.js"></script>
+</body>
+</html>

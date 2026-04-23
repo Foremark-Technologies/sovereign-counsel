@@ -1,0 +1,964 @@
+/* ============================================================
+   SOVEREIGN COUNSEL — v6.1 LAUNCH-GRADE POLISH PASS
+   Overlay on top of design-system · components · pages.
+   Purpose: normalize micro-details, tighten spacing/radius,
+   eliminate any "AI-generated" template feel, and enforce the
+   handcrafted hierarchy a senior in-house design team would ship.
+   Benchmark: Stripe · Linear · Vanta · Ramp · Harvey · Apple
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. CANONICAL TOKENS (spec lock)
+   Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48
+   Radius:  button 10px · card 14px · pill full · modal 18px
+   ------------------------------------------------------------ */
+:root {
+  --sp-canon-1:  4px;
+  --sp-canon-2:  8px;
+  --sp-canon-3: 12px;
+  --sp-canon-4: 16px;
+  --sp-canon-6: 24px;
+  --sp-canon-8: 32px;
+  --sp-canon-12: 48px;
+
+  /* Recalibrated micro-shadows — subtle, layered, realistic */
+  --shadow-xs:  0 1px 1px rgba(10,16,32,0.03);
+  --shadow-sm:  0 1px 2px rgba(10,16,32,0.04), 0 1px 1px rgba(10,16,32,0.02);
+  --shadow-md:  0 1px 2px rgba(10,16,32,0.04), 0 4px 10px rgba(10,16,32,0.05);
+  --shadow-lg:  0 2px 4px rgba(10,16,32,0.04), 0 10px 28px rgba(10,16,32,0.07);
+  --shadow-xl:  0 4px 10px rgba(10,16,32,0.05), 0 20px 42px rgba(10,16,32,0.10);
+  --shadow-2xl: 0 8px 20px rgba(10,16,32,0.06), 0 32px 68px rgba(10,16,32,0.14);
+
+  /* Ring — refined */
+  --ring-blue: 0 0 0 3px rgba(59,130,246,0.16);
+  --ring-red:  0 0 0 3px rgba(239,68,68,0.16);
+  --ring-navy: 0 0 0 3px rgba(20,28,51,0.12);
+
+  /* Border tones — soft neutrals only */
+  --border-subtle:  #eef0f3;
+  --border-light:   #e4e6eb;
+  --border-medium:  #d5d8df;
+  --border-strong:  #b8bcc5;
+}
+
+html { font-size: 14px; }
+
+/* Universal focus — a single, confident, consistent ring */
+*:focus { outline: none; }
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible,
+.btn-icon:focus-visible,
+.dropdown-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-blue);
+  border-color: var(--blue-500);
+}
+
+/* Selection — tighter navy accent */
+::selection { background: rgba(20,28,51,0.16); color: var(--navy-900); }
+
+/* Refined scrollbar — nearly invisible until needed */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(10,16,32,0.12);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 160ms ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(10,16,32,0.28);
+  background-clip: padding-box;
+}
+
+/* ------------------------------------------------------------
+   2. SIDEBAR — FINAL POLISH
+   Every icon 20px optical · consistent contrast · clear states
+   ------------------------------------------------------------ */
+
+/* Force the Font Awesome glyph to honor a stable 20px optical box,
+   regardless of the specific icon's intrinsic width. */
+.app-sidebar .sidebar-nav-item > i {
+  font-size: 18px !important;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* High-contrast rest state — icon must be legible on all displays */
+.sidebar-nav-item { color: rgba(255,255,255,0.66); }
+.sidebar-nav-item:hover { color: #ffffff; background: rgba(255,255,255,0.08); }
+
+/* Active state — unmistakable, but restrained */
+.sidebar-nav-item.active {
+  color: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(59,130,246,0.22) 0%, rgba(59,130,246,0.09) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(147,197,253,0.20),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Subtle separator between primary nav and footer nav */
+.app-sidebar > nav { position: relative; }
+.app-sidebar > nav::after {
+  content: '';
+  position: absolute;
+  left: 14px; right: 14px; bottom: -8px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+}
+
+/* ------------------------------------------------------------
+   3. TOPBAR — refined hairline, tighter rhythm
+   ------------------------------------------------------------ */
+.app-topbar {
+  height: 56px;
+  padding: 0 24px;
+  background: rgba(255,255,255,0.88);
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 12px;
+}
+.app-topbar .divider-v { height: 20px; background: var(--border-light); }
+
+/* ------------------------------------------------------------
+   4. CANONICAL RADII (apply across surfaces)
+   ------------------------------------------------------------ */
+.btn, .btn-secondary, .btn-primary, .btn-ghost, .btn-danger, .btn-success {
+  border-radius: 10px;
+}
+.btn-sm { border-radius: 8px; }
+.btn-xs { border-radius: 6px; }
+.btn-lg { border-radius: 12px; }
+.btn-icon { border-radius: 10px; }
+
+.card, .dash-stat, .table-frame { border-radius: 14px; }
+.card-hero, .dash-stat-hero { border-radius: 18px; }
+.modal-content { border-radius: 18px; }
+.cmd-box { border-radius: 16px; }
+.input { border-radius: 10px; }
+.input-sm { border-radius: 8px; }
+.input-lg { border-radius: 12px; }
+.badge { border-radius: 999px; }
+
+/* ------------------------------------------------------------
+   5. BUTTONS — handcrafted feel
+   Unified height rhythm: 28 / 32 / 36 / 40 px
+   ------------------------------------------------------------ */
+.btn {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  gap: 8px;
+  line-height: 1;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 120ms cubic-bezier(0.16,1,0.3,1);
+}
+.btn:hover { transform: translateY(-0.5px); }
+.btn:active { transform: translateY(0); }
+
+.btn-sm { height: 28px; padding: 0 10px; font-size: 12px; gap: 6px; }
+.btn-xs { height: 22px; padding: 0 8px; font-size: 11px; gap: 4px; }
+.btn-lg { height: 40px; padding: 0 18px; font-size: 13.5px; gap: 8px; }
+
+.btn-primary {
+  background: linear-gradient(180deg, #141c33 0%, #0a1020 100%);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 1px 2px rgba(10,16,32,0.18),
+    0 0 0 1px rgba(10,16,32,0.45);
+}
+.btn-primary:hover {
+  background: linear-gradient(180deg, #1c2846 0%, #0e1528 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    0 3px 10px rgba(10,16,32,0.22),
+    0 0 0 1px rgba(10,16,32,0.55);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--graphite-900);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px rgba(10,16,32,0.03);
+}
+.btn-secondary:hover {
+  background: var(--surface-1);
+  border-color: var(--border-medium);
+  box-shadow: 0 2px 6px rgba(10,16,32,0.05);
+}
+
+.btn-ghost { color: var(--graphite-700); background: transparent; }
+.btn-ghost:hover { background: var(--surface-3); color: var(--navy-900); }
+
+.btn-icon {
+  width: 32px; height: 32px;
+  color: var(--graphite-600);
+}
+.btn-icon:hover { background: var(--surface-3); color: var(--navy-900); }
+
+/* ------------------------------------------------------------
+   6. CHIPS / BADGES — refined padding, crisp type
+   ------------------------------------------------------------ */
+.badge {
+  height: 20px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.002em;
+  border-radius: 999px;
+}
+.badge-dot::before {
+  width: 6px; height: 6px;
+  box-shadow: none;
+}
+.stat-chip {
+  height: 24px;
+  padding: 0 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px rgba(10,16,32,0.03);
+}
+
+/* Saved filter chip — enterprise staple */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px 0 12px;
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--graphite-800);
+  background: var(--surface-1);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  transition: all 160ms ease;
+  cursor: pointer;
+}
+.filter-chip:hover {
+  background: #fff;
+  border-color: var(--border-medium);
+  box-shadow: 0 1px 2px rgba(10,16,32,0.04);
+}
+.filter-chip .dismiss {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; border-radius: 999px;
+  color: var(--graphite-400);
+  transition: all 140ms ease;
+}
+.filter-chip .dismiss:hover { background: var(--surface-3); color: var(--graphite-800); }
+.filter-chip.active {
+  background: var(--navy-50);
+  border-color: rgba(20,28,51,0.18);
+  color: var(--navy-900);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   7. INPUTS & SEARCH — tactile, responsive
+   ------------------------------------------------------------ */
+.input {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+.input:hover { border-color: var(--border-medium); }
+.input:focus { border-color: var(--blue-500); box-shadow: var(--ring-blue); }
+
+.input-sm { height: 28px; font-size: 12px; padding: 0 10px; }
+.input-lg { height: 44px; font-size: 14px; padding: 0 14px; }
+
+.search-bar {
+  height: 32px;
+  padding: 0 12px;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+.search-bar:hover { background: var(--surface-3); }
+.search-bar:focus-within {
+  background: #ffffff;
+  border-color: var(--blue-500);
+  box-shadow: var(--ring-blue);
+}
+
+/* ------------------------------------------------------------
+   8. CARDS — refined surfaces, disciplined elevation
+   ------------------------------------------------------------ */
+.card {
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.card-header {
+  min-height: 52px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.card-body { padding: 20px; }
+.card-body-dense { padding: 12px 16px; }
+.card-body-tight { padding: 8px 12px; }
+
+.card-hover:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-md);
+  transform: none; /* remove translateY — looks AI-generated */
+}
+
+.dash-stat {
+  padding: 16px 20px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.dash-stat:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-sm);
+  transform: none;
+}
+
+.dash-stat-hero {
+  padding: 24px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+}
+
+/* ------------------------------------------------------------
+   9. TABLES — enterprise-grade operational feel
+   ------------------------------------------------------------ */
+.table-frame {
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.power-table { font-size: 13px; }
+
+.power-table thead th {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--graphite-500);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border-light);
+}
+.power-table thead th:first-child { padding-left: 20px; }
+.power-table thead th:last-child  { padding-right: 20px; }
+
+.power-table tbody td {
+  height: 48px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--graphite-800);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+.power-table tbody td:first-child { padding-left: 20px; }
+.power-table tbody td:last-child  { padding-right: 20px; }
+.power-table tbody tr { transition: background-color 140ms ease; }
+.power-table tbody tr:hover td { background: var(--surface-1); }
+.power-table tbody tr:last-child td { border-bottom: none; }
+
+/* Cell emphasis */
+.power-table td.cell-primary {
+  color: var(--navy-900);
+  font-weight: 600;
+  letter-spacing: -0.008em;
+}
+.power-table td.cell-mono {
+  font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--graphite-500);
+}
+.power-table td.cell-numeric {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Sticky header when inside a scrollable frame */
+.table-frame.scroll-y { max-height: 640px; overflow-y: auto; }
+.table-frame.scroll-y .power-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-1);
+  box-shadow: 0 1px 0 var(--border-light);
+}
+
+/* Freeze first column utility */
+.table-frame.freeze-first .power-table td:first-child,
+.table-frame.freeze-first .power-table th:first-child {
+  position: sticky;
+  left: 0;
+  background: #ffffff;
+  z-index: 1;
+}
+.table-frame.freeze-first .power-table thead th:first-child {
+  background: var(--surface-1);
+  z-index: 3;
+}
+.table-frame.freeze-first .power-table tbody tr:hover td:first-child {
+  background: var(--surface-1);
+}
+
+/* Row-level priority accents — a single hairline, never a band */
+.power-table tr.row-critical td:first-child { box-shadow: inset 3px 0 0 var(--red-500); }
+.power-table tr.row-warning  td:first-child { box-shadow: inset 3px 0 0 var(--amber-500); }
+.power-table tr.row-success  td:first-child { box-shadow: inset 3px 0 0 var(--emerald-500); }
+
+/* Row quick-actions — hover-reveal */
+.power-table .row-actions {
+  display: inline-flex;
+  gap: 2px;
+  opacity: 0;
+  transform: translateX(4px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+.power-table tr:hover .row-actions { opacity: 1; transform: translateX(0); }
+.power-table .row-actions button {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--graphite-500);
+  border: 1px solid transparent;
+  transition: all 140ms ease;
+  font-size: 12px;
+}
+.power-table .row-actions button:hover {
+  background: #fff;
+  border-color: var(--border-light);
+  color: var(--navy-900);
+  box-shadow: 0 1px 2px rgba(10,16,32,0.05);
+}
+
+/* Empty table state */
+.table-empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--graphite-500);
+}
+.table-empty .table-empty-icon {
+  width: 40px; height: 40px;
+  margin: 0 auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2);
+  color: var(--graphite-400);
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+/* ------------------------------------------------------------
+   10. AVATARS — pixel-aligned, stable
+   ------------------------------------------------------------ */
+.avatar {
+  border-radius: 999px;
+  background: linear-gradient(135deg, #293a5e 0%, #0a1020 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 1px 2px rgba(10,16,32,0.08);
+  font-feature-settings: 'tnum';
+}
+.avatar-xs { width: 20px; height: 20px; font-size: 9px; }
+.avatar-sm { width: 24px; height: 24px; font-size: 10px; }
+.avatar-md { width: 28px; height: 28px; font-size: 10.5px; }
+.avatar-lg { width: 32px; height: 32px; font-size: 11.5px; }
+.avatar-xl { width: 40px; height: 40px; font-size: 13px; }
+.avatar-2xl { width: 56px; height: 56px; font-size: 17px; }
+.avatar-group .avatar { border: 2px solid #ffffff; margin-left: -6px; }
+.avatar-group .avatar:first-child { margin-left: 0; }
+
+/* ------------------------------------------------------------
+   11. TABS & SEGMENTED — premium navigation
+   ------------------------------------------------------------ */
+.tab-nav { gap: 4px; border-bottom: 1px solid var(--border-light); padding: 0 4px; }
+.tab-item {
+  height: 40px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 550;
+  color: var(--graphite-600);
+  border-bottom: 2px solid transparent;
+}
+.tab-item:hover { color: var(--navy-900); }
+.tab-item.active {
+  color: var(--navy-900);
+  font-weight: 600;
+  border-bottom-color: var(--navy-900);
+}
+
+.segmented {
+  height: 32px;
+  padding: 3px;
+  background: var(--surface-3);
+  border-radius: 10px;
+}
+.segmented-item {
+  height: 26px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 550;
+  border-radius: 8px;
+  display: inline-flex; align-items: center;
+}
+.segmented-item.active {
+  background: #ffffff;
+  color: var(--navy-900);
+  box-shadow: 0 1px 2px rgba(10,16,32,0.06), 0 0 0 1px rgba(10,16,32,0.04);
+}
+
+/* ------------------------------------------------------------
+   12. PRIORITY, SLA, APPROVAL, DUE STATE — operational markers
+   ------------------------------------------------------------ */
+.due-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  height: 20px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.due-state.due-overdue  { background: var(--red-50);    color: var(--red-700);    box-shadow: inset 0 0 0 1px rgba(239,68,68,0.2); }
+.due-state.due-today    { background: #fff4ed;          color: #c2410c;           box-shadow: inset 0 0 0 1px rgba(234,88,12,0.2); }
+.due-state.due-soon     { background: var(--amber-50);  color: var(--amber-700);  box-shadow: inset 0 0 0 1px rgba(217,119,6,0.18); }
+.due-state.due-upcoming { background: var(--blue-50);   color: var(--blue-700);   box-shadow: inset 0 0 0 1px rgba(37,99,235,0.16); }
+.due-state.due-ok       { background: var(--emerald-50);color: var(--emerald-700);box-shadow: inset 0 0 0 1px rgba(16,185,129,0.2); }
+
+/* Approval states */
+.approval-state {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 600; letter-spacing: -0.003em;
+}
+.approval-state::before {
+  content: ''; width: 6px; height: 6px; border-radius: 999px;
+}
+.approval-pending::before  { background: var(--amber-500); box-shadow: 0 0 0 3px rgba(245,158,11,0.18); }
+.approval-approved::before { background: var(--emerald-500); }
+.approval-rejected::before { background: var(--red-500); }
+.approval-draft::before    { background: var(--graphite-300); }
+
+/* Ownership label */
+.owner-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--graphite-700); font-weight: 500;
+}
+.owner-label .owner-role {
+  font-size: 10.5px; color: var(--graphite-400);
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 650;
+}
+
+/* Invoice aging bucket chip */
+.aging-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 20px; padding: 0 8px;
+  font-size: 11px; font-weight: 600;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+.aging-0   { background: var(--emerald-50); color: var(--emerald-700); }
+.aging-30  { background: var(--blue-50);    color: var(--blue-700); }
+.aging-60  { background: var(--amber-50);   color: var(--amber-700); }
+.aging-90  { background: #fff4ed;           color: #c2410c; }
+.aging-120 { background: var(--red-50);     color: var(--red-700); }
+
+/* Audit row (for Control Center feed) */
+.audit-row {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 12px;
+  padding: 10px 16px;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12.5px;
+  transition: background-color 140ms ease;
+}
+.audit-row:hover { background: var(--surface-1); }
+.audit-row:last-child { border-bottom: none; }
+.audit-row .audit-dot {
+  width: 8px; height: 8px; border-radius: 999px; background: var(--graphite-300);
+}
+.audit-row.audit-critical .audit-dot { background: var(--red-500); box-shadow: 0 0 0 3px rgba(239,68,68,0.16); }
+.audit-row.audit-auth     .audit-dot { background: var(--blue-500); }
+.audit-row.audit-change   .audit-dot { background: var(--amber-500); }
+.audit-row .audit-time {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px; color: var(--graphite-400);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------
+   13. SKELETON / LOADING — realistic, not toy-like
+   ------------------------------------------------------------ */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-3);
+  border-radius: 6px;
+  color: transparent;
+}
+.skeleton::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.65) 50%,
+    transparent 100%);
+  animation: skeletonShimmer 1.4s infinite;
+}
+@keyframes skeletonShimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+.skeleton-line   { height: 12px; width: 100%; }
+.skeleton-line.sm{ height: 10px; }
+.skeleton-line.lg{ height: 16px; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-80 { width: 80%; }
+
+/* Empty states — calm, minimal, premium */
+.empty-state {
+  padding: 48px 24px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  color: var(--graphite-500);
+  gap: 8px;
+}
+.empty-state .empty-icon {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2);
+  color: var(--graphite-400);
+  border-radius: 12px;
+  margin-bottom: 4px;
+  font-size: 17px;
+}
+.empty-state .empty-title {
+  font-size: 13.5px; font-weight: 600; color: var(--navy-900);
+  letter-spacing: -0.008em;
+}
+.empty-state .empty-sub {
+  font-size: 12.5px; color: var(--graphite-500); max-width: 320px;
+}
+
+/* ------------------------------------------------------------
+   14. MODALS / OVERLAYS
+   ------------------------------------------------------------ */
+.modal-overlay { background: rgba(8,12,22,0.44); backdrop-filter: blur(8px) saturate(140%); }
+.modal-content {
+  border-radius: 18px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-2xl);
+}
+.modal-header { padding: 18px 22px; min-height: 60px; border-bottom: 1px solid var(--border-subtle); }
+.modal-body   { padding: 20px 22px; }
+.modal-footer { padding: 14px 22px; background: var(--surface-1); border-top: 1px solid var(--border-subtle); }
+
+/* ------------------------------------------------------------
+   15. DROPDOWN
+   ------------------------------------------------------------ */
+.dropdown {
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xl);
+  background: #ffffff;
+}
+.dropdown-item {
+  height: 32px;
+  padding: 0 10px;
+  gap: 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--graphite-900);
+  font-weight: 500;
+}
+.dropdown-item:hover { background: var(--surface-2); }
+
+/* ------------------------------------------------------------
+   16. TOPBAR NOTIFICATION DOT — restrained
+   ------------------------------------------------------------ */
+.notif-dot {
+  width: 7px; height: 7px;
+  background: var(--red-500);
+  border-radius: 999px;
+  border: 1.5px solid white;
+  animation: none;
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+}
+
+/* ------------------------------------------------------------
+   17. PAGE-LEVEL POLISH
+   ------------------------------------------------------------ */
+
+/* Page title rhythm */
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  color: var(--navy-900);
+  line-height: 1.2;
+}
+.page-subtitle {
+  font-size: 13px;
+  color: var(--graphite-500);
+  margin-top: 4px;
+  letter-spacing: -0.003em;
+}
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.page-header-actions { display: inline-flex; align-items: center; gap: 8px; }
+
+/* Section headers */
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--navy-900);
+}
+.section-eyebrow {
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--graphite-400);
+}
+
+/* Hero KPI — single dominant zone */
+.kpi-hero-value {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--navy-900);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum','cv11';
+}
+.kpi-hero-delta {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 650;
+  padding: 2px 8px; border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-hero-delta.up   { background: var(--emerald-50); color: var(--emerald-700); }
+.kpi-hero-delta.down { background: var(--red-50);     color: var(--red-700); }
+.kpi-hero-delta.flat { background: var(--surface-3);  color: var(--graphite-600); }
+
+/* Secondary KPI value */
+.kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--navy-900);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Dashboard action bar */
+.dash-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: var(--shadow-xs);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Login — slightly warmer and more "signed document" */
+.login-card {
+  padding: 4px;
+}
+.login-card .card {
+  border-radius: 18px;
+  border: 1px solid var(--border-light);
+  box-shadow:
+    0 1px 2px rgba(10,16,32,0.04),
+    0 12px 32px rgba(10,16,32,0.08),
+    0 1px 0 rgba(255,255,255,0.6) inset;
+}
+.sso-btn {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px rgba(10,16,32,0.03);
+}
+.sso-btn:hover {
+  border-color: var(--border-medium);
+  background: var(--surface-1);
+  box-shadow: 0 2px 6px rgba(10,16,32,0.05);
+}
+
+/* Calendar — elegant today pill */
+.cal-today-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 24px; padding: 0 10px;
+  border-radius: 999px;
+  background: var(--navy-900); color: #ffffff;
+  font-size: 11.5px; font-weight: 600; letter-spacing: -0.003em;
+}
+.cal-today-pill::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--emerald-400);
+  box-shadow: 0 0 0 3px rgba(52,211,153,0.25);
+}
+
+/* Documents — upload zone polish */
+.upload-zone {
+  border: 1.5px dashed var(--border-medium);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, #fbfbfc 0%, #ffffff 100%);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.upload-zone:hover, .upload-zone.drag-active {
+  border-color: var(--blue-500);
+  background: var(--blue-50);
+}
+
+/* Client Portal — reassuring hero */
+.portal-hero {
+  background:
+    radial-gradient(ellipse 900px 500px at 15% 0%, rgba(59,130,246,0.08) 0%, transparent 55%),
+    linear-gradient(180deg, #0a1020 0%, #05080f 100%);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 32px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.portal-hero .portal-hero-eyebrow {
+  font-size: 11px; font-weight: 650; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55);
+}
+.portal-hero .portal-hero-title {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.028em;
+  line-height: 1.2; margin-top: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.82) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Progress tracker (portal milestones) */
+.milestone-track {
+  display: grid;
+  grid-template-columns: repeat(var(--milestone-count, 4), 1fr);
+  gap: 0;
+  margin-top: 16px;
+  position: relative;
+}
+.milestone-track .milestone {
+  position: relative;
+  padding: 14px 16px 14px 34px;
+  font-size: 12.5px;
+  color: var(--graphite-700);
+  border-top: 1px solid var(--border-subtle);
+}
+.milestone .m-dot {
+  position: absolute;
+  left: 12px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid var(--border-medium);
+}
+.milestone.m-done .m-dot  { background: var(--emerald-500); border-color: var(--emerald-500); }
+.milestone.m-active .m-dot{ background: var(--navy-900);   border-color: var(--navy-900);
+  box-shadow: 0 0 0 4px rgba(20,28,51,0.1); }
+.milestone .m-label { font-weight: 600; color: var(--navy-900); }
+.milestone .m-meta  { font-size: 11px; color: var(--graphite-500); margin-top: 2px; }
+
+/* ------------------------------------------------------------
+   18. MOTION DISCIPLINE
+   All interactive transitions: 140–220ms. Nothing longer.
+   ------------------------------------------------------------ */
+.btn, .btn-icon, .card, .dash-stat, .power-table tbody tr,
+.filter-chip, .tab-item, .segmented-item, .dropdown-item, .sidebar-nav-item {
+  transition-duration: 160ms !important;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Disable excessive float/glow animations that feel "AI-generated" */
+.login-brand::before { animation: none; }
+.pulse-ring { animation: none; }
+
+/* Preserve motion only where functional */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   19. SMALL FINAL MICRO-DETAILS
+   ------------------------------------------------------------ */
+
+/* Tabular numerals everywhere that matters */
+.power-table td,
+.kpi-value, .kpi-hero-value,
+.t-metric, .t-metric-sm, .t-metric-lg, .t-metric-xl, .t-metric-xs,
+.stat-chip, .badge, .due-state, .aging-chip {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum', 'cv11';
+}
+
+/* Hairline dividers inside cards (not borders) */
+.card .divider, .card-body .divider {
+  height: 1px; background: var(--border-subtle); margin: 12px -20px;
+}
+
+/* Utility: soft caption row */
+.meta-row {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; color: var(--graphite-500);
+}
+.meta-row .sep { color: var(--border-medium); }
+
+/* Link styles (restrained) */
+.link { font-weight: 550; color: var(--navy-800); }
+.link:hover { color: var(--blue-600); }

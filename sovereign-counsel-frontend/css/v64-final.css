@@ -1,0 +1,927 @@
+/* ============================================================
+   SOVEREIGN COUNSEL — v6.4 FINAL PRODUCTION PASS (April 2026)
+   ============================================================
+   Loaded LAST. Wins the cascade over EVERY prior layer:
+     design-system · components · pages · polish · elite · v63 · mobile
+
+   Purpose: Final ship-grade QA pass. Surgical corrections to remaining
+   issues across responsiveness, visual polish, hierarchy, and
+   interaction quality. No redesign — only refinements.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   0. ROOT GUARDS — prevent any horizontal bleed globally
+   ------------------------------------------------------------ */
+html, body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Smoother scrolling everywhere */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Better selection color — premium brand tie-in */
+::selection {
+  background: rgba(29, 78, 216, 0.18);
+  color: #05080f;
+}
+
+/* Minimal native scrollbar styling — premium feel on desktop */
+@media (hover: hover) and (pointer: fine) {
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(10, 16, 32, 0.12);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(10, 16, 32, 0.22); background-clip: padding-box; border: 3px solid transparent; }
+}
+
+/* ------------------------------------------------------------
+   1. FOCUS SYSTEM — canonical, accessible, premium
+   ------------------------------------------------------------ */
+:focus { outline: none; }
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(29, 78, 216, 0.45) !important;
+  border-radius: 8px;
+}
+.btn:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.filter-chip:focus-visible,
+.tab-item:focus-visible {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(29, 78, 216, 0.45) !important;
+  position: relative;
+  z-index: 2;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  box-shadow:
+    0 0 0 1px rgba(29, 78, 216, 0.9),
+    0 0 0 4px rgba(29, 78, 216, 0.15) !important;
+}
+
+/* ------------------------------------------------------------
+   2. BUTTON REFINEMENT — unified hover / press states
+   ------------------------------------------------------------ */
+.btn, button.btn-primary, button.btn-secondary, button.btn-ghost, button.btn-danger {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+}
+.btn:not(:disabled):active,
+button.btn-primary:not(:disabled):active,
+button.btn-secondary:not(:disabled):active,
+button.btn-ghost:not(:disabled):active {
+  transform: translateY(0.5px) scale(0.995);
+  transition-duration: 60ms;
+}
+.btn:disabled,
+button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Icon button (round) — consistent premium presence */
+.btn-icon {
+  transition: background 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+.btn-icon:hover {
+  background: var(--surface-2, #f6f7f9);
+  box-shadow: inset 0 0 0 1px rgba(10, 16, 32, 0.08);
+}
+.btn-icon:active { transform: scale(0.96); }
+
+/* ------------------------------------------------------------
+   3. CARD SURFACE — consistent edge quality
+   ------------------------------------------------------------ */
+.card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(10, 16, 32, 0.05),
+    0 1px 2px rgba(10, 16, 32, 0.03);
+  transition: box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card.interactive:hover,
+.card[role="button"]:hover {
+  box-shadow:
+    0 0 0 1px rgba(10, 16, 32, 0.07),
+    0 1px 2px rgba(10, 16, 32, 0.04),
+    0 8px 20px -6px rgba(10, 16, 32, 0.08);
+}
+
+/* ------------------------------------------------------------
+   4. TABLE — uniform row rhythm, hover polish, overflow safety
+   ------------------------------------------------------------ */
+.power-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.power-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+  border-bottom: 1px solid rgba(10, 16, 32, 0.08);
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--graphite-500, #63656e);
+  padding: 11px 14px;
+  white-space: nowrap;
+}
+.power-table tbody tr {
+  transition: background 120ms ease;
+}
+.power-table tbody tr:hover {
+  background: #f8fafc;
+}
+.power-table tbody tr.row-critical:hover { background: #fff3f4; }
+.power-table tbody tr.row-warning:hover  { background: #fffaf0; }
+.power-table tbody tr.selected { background: #eff6ff; }
+.power-table tbody tr.selected:hover { background: #e0eefe; }
+.power-table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(10, 16, 32, 0.045);
+  vertical-align: middle;
+  font-size: 12.5px;
+}
+.power-table tbody tr:last-child td { border-bottom: 0; }
+
+/* Scrollable table wrapper: elegant fade hints on horizontal scroll */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(10, 16, 32, 0.18) transparent;
+}
+.overflow-x-auto::-webkit-scrollbar { height: 8px; }
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(10, 16, 32, 0.18);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* ------------------------------------------------------------
+   5. BADGE — consistent sizing & vertical alignment
+   ------------------------------------------------------------ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: middle;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+/* ------------------------------------------------------------
+   6. MOBILE HEADER — elevated polish
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .mobile-header {
+    background: rgba(255, 255, 255, 0.94);
+    border-bottom: 1px solid rgba(10, 16, 32, 0.07);
+    box-shadow:
+      0 1px 0 rgba(10, 16, 32, 0.02),
+      0 4px 14px -6px rgba(10, 16, 32, 0.06);
+  }
+  .mobile-header-btn {
+    transition: background 140ms ease, transform 140ms ease;
+  }
+  .mobile-header-btn:active { transform: scale(0.92); }
+
+  .mobile-header-title {
+    font-size: 14.5px;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    color: var(--navy-900, #0a1020);
+  }
+  .mobile-header-sub {
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    color: var(--graphite-400, #82848d);
+  }
+}
+
+/* ------------------------------------------------------------
+   7. MOBILE DRAWER — final polish
+   ------------------------------------------------------------ */
+.mobile-drawer {
+  background:
+    radial-gradient(ellipse 420px 300px at 50% -8%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+    linear-gradient(180deg, #070a12 0%, #040610 100%);
+}
+.mobile-drawer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 300px 220px at 85% 95%, rgba(96, 165, 250, 0.06) 0%, transparent 55%);
+}
+.mobile-drawer-nav-item {
+  position: relative;
+}
+.mobile-drawer-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+  box-shadow: 0 0 12px rgba(96, 165, 250, 0.5);
+}
+
+/* ------------------------------------------------------------
+   8. APP CONTENT — spacing rhythm lock (desktop only; mobile handled by mobile.css)
+   ------------------------------------------------------------ */
+@media (min-width: 1024px) and (max-width: 1399.98px) {
+  .app-content {
+    padding: 26px 28px 52px;
+  }
+}
+@media (min-width: 1400px) {
+  .app-content {
+    padding: 32px 40px 64px;
+  }
+}
+
+/* ------------------------------------------------------------
+   9. PAGE HEADER ROW — mobile stacking & typography lock
+   ------------------------------------------------------------ */
+@media (max-width: 767.98px) {
+  /* Every page opens with a title + CTA row — this normalizes them */
+  .app-content > .anim-in:first-child.flex,
+  .app-content > .flex.items-end.justify-between:first-child,
+  .app-content > .flex.items-start.justify-between:first-child,
+  .app-content > .flex.items-center.justify-between:first-child {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    margin-bottom: 18px !important;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(10, 16, 32, 0.06);
+  }
+
+  /* Page eyebrow + h1 rhythm */
+  .app-content .page-eyebrow {
+    font-size: 10px !important;
+    letter-spacing: 0.16em !important;
+    margin-bottom: 4px;
+  }
+  .app-content .t-h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.22 !important;
+    letter-spacing: -0.028em !important;
+  }
+  .app-content .t-h1 + p,
+  .app-content .t-h1 + .t-body {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+
+  /* Action buttons — beautiful full-row on mobile, wrap neatly */
+  .app-content > .flex.items-end > .flex.items-center,
+  .app-content > .flex.items-start > .flex.items-center,
+  .app-content > .flex.items-center > .flex.items-center {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    width: 100%;
+  }
+  .app-content > .flex > .flex > .btn {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: center;
+  }
+  /* Primary CTA should feel prominent — full width when alone */
+  .app-content > .flex > .flex > .btn.btn-primary:last-child {
+    flex-basis: 100%;
+    order: 99;
+  }
+}
+
+/* ------------------------------------------------------------
+   10. DASHBOARD — KPI row rhythm across breakpoints
+   ------------------------------------------------------------ */
+.dash-stats {
+  display: grid;
+  gap: 14px;
+}
+@media (min-width: 1024px) {
+  .dash-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+}
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .dash-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+}
+@media (min-width: 481px) and (max-width: 767.98px) {
+  .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+}
+@media (max-width: 480px) {
+  .dash-stats { grid-template-columns: 1fr; gap: 10px; }
+}
+
+/* Tighten KPI cards on mobile for density */
+@media (max-width: 767.98px) {
+  .dash-stat {
+    padding: 16px 14px !important;
+    min-height: 0;
+  }
+  .dash-stat .t-metric {
+    font-size: 24px !important;
+    letter-spacing: -0.025em;
+  }
+  .dash-stat .t-label {
+    font-size: 9.5px !important;
+    letter-spacing: 0.13em !important;
+  }
+  .dash-stat .icon-tile-sm {
+    width: 26px; height: 26px;
+  }
+  .dash-stat .t-caption.mt-2 {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+}
+
+/* ------------------------------------------------------------
+   11. DASH GRID — main + rail layout
+   ------------------------------------------------------------ */
+@media (min-width: 1280px) {
+  .dash-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 20px;
+    align-items: start;
+  }
+}
+@media (max-width: 1279.98px) {
+  .dash-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+  .dash-main, .dash-rail {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* Dashboard row-2 (hearings + deadlines) */
+@media (min-width: 900px) {
+  .dash-row-2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+}
+@media (max-width: 899.98px) {
+  .dash-row-2 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    margin-top: 14px;
+  }
+}
+
+/* ------------------------------------------------------------
+   12. MATTERS PAGE — table overflow + controls polish
+   ------------------------------------------------------------ */
+.matters-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+@media (max-width: 1023.98px) {
+  .matters-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .matters-controls > .flex:first-child {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    margin-bottom: -4px;
+  }
+  .matters-controls > .flex:first-child::-webkit-scrollbar { display: none; }
+  .matters-controls > .flex:first-child > * { flex: 0 0 auto; }
+  .matters-controls > .flex:last-child {
+    display: grid !important;
+    grid-template-columns: 1fr 150px;
+    gap: 8px;
+    width: 100%;
+  }
+  .matters-controls .search-bar {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .matters-controls select {
+    width: 100% !important;
+  }
+}
+@media (max-width: 480px) {
+  .matters-controls > .flex:last-child {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Matters bulk-action bar: wrap on mobile, remove horizontal clip */
+@media (max-width: 767.98px) {
+  .app-content .flex.items-center.gap-2.mb-3.anim-fade {
+    flex-wrap: wrap !important;
+    padding: 10px 12px !important;
+  }
+  .app-content .flex.items-center.gap-2.mb-3.anim-fade .divider-v {
+    display: none;
+  }
+  .app-content .flex.items-center.gap-2.mb-3.anim-fade > .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 0;
+  }
+}
+
+/* ------------------------------------------------------------
+   13. TABLES — tablet experience + ironclad horizontal scroll
+   ------------------------------------------------------------ */
+@media (max-width: 1279.98px) {
+  .app-content .overflow-x-auto {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    /* Visual affordance: soft shadow on scrollable edges */
+    background:
+      linear-gradient(90deg, #ffffff 20%, rgba(255, 255, 255, 0)) 0 0,
+      linear-gradient(-90deg, #ffffff 20%, rgba(255, 255, 255, 0)) 100% 0,
+      linear-gradient(90deg, rgba(10, 16, 32, 0.08), rgba(10, 16, 32, 0)) 0 0,
+      linear-gradient(-90deg, rgba(10, 16, 32, 0.08), rgba(10, 16, 32, 0)) 100% 0;
+    background-repeat: no-repeat;
+    background-size: 36px 100%, 36px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+}
+
+/* ------------------------------------------------------------
+   14. MATTER DETAIL — responsive flagship layout
+   ------------------------------------------------------------ */
+@media (max-width: 1199.98px) {
+  .matter-layout, .matter-detail-grid, .matter-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .matter-left, .matter-right {
+    display: block !important; /* show on tablet under title */
+  }
+}
+@media (max-width: 1023.98px) {
+  /* On mobile collapse even further — hide aside rails if redundant */
+  .matter-aside {
+    display: none !important;
+  }
+}
+
+/* Matter detail tabs — horizontal scroll on mobile */
+@media (max-width: 767.98px) {
+  .matter-tabs, .tab-nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+    margin-left: -14px;
+    margin-right: -14px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .matter-tabs::-webkit-scrollbar, .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-item { flex: 0 0 auto; white-space: nowrap; }
+}
+
+/* ------------------------------------------------------------
+   15. CALENDAR — mobile readability + horizontal day strip
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .cal-week-grid, .calendar-grid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cal-week-grid > *, .calendar-grid > * {
+    min-width: 760px;
+  }
+}
+
+/* ------------------------------------------------------------
+   16. BILLING — CFO-grade on all screens
+   ------------------------------------------------------------ */
+@media (max-width: 767.98px) {
+  .billing-stats { gap: 10px !important; }
+  .billing-stat { padding: 14px !important; }
+  .billing-stat .stat-value,
+  .billing-stat .t-metric {
+    font-size: 22px !important;
+    letter-spacing: -0.025em;
+  }
+}
+
+/* ------------------------------------------------------------
+   17. ANALYTICS — chart containers don't break on resize
+   ------------------------------------------------------------ */
+.recharts-responsive-container,
+.recharts-wrapper {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+.recharts-surface { overflow: visible; }
+
+@media (max-width: 767.98px) {
+  /* Recharts legends wrap on mobile */
+  .recharts-legend-wrapper {
+    position: static !important;
+    margin-top: 8px;
+  }
+  .recharts-legend-item { margin-right: 10px !important; }
+  /* Axis ticks smaller on mobile */
+  .recharts-cartesian-axis-tick text { font-size: 10px; }
+}
+
+/* ------------------------------------------------------------
+   18. LOGIN — refined mobile experience
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .login-page {
+    grid-template-columns: 1fr !important;
+  }
+  .login-brand {
+    display: none !important; /* keep login form focused on mobile */
+  }
+  .login-form-side {
+    min-height: 100vh;
+    padding: 40px 24px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-form-card,
+  .login-card {
+    width: 100% !important;
+    max-width: 440px !important;
+  }
+}
+@media (max-width: 480px) {
+  .login-form-side {
+    padding: 32px 18px !important;
+  }
+  .login-form-card,
+  .login-card {
+    padding: 28px 22px !important;
+  }
+}
+
+/* Login CTA: premium pressed feedback */
+.login-form-card .btn-primary,
+.login-card .btn-primary {
+  transition: transform 120ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+.login-form-card .btn-primary:hover,
+.login-card .btn-primary:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    0 0 0 1px rgba(5, 8, 15, 0.9),
+    0 6px 18px -4px rgba(29, 78, 216, 0.35);
+}
+.login-form-card .btn-primary:active,
+.login-card .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* ------------------------------------------------------------
+   19. CLIENT PORTAL — luxury feel on mobile
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .portal-grid, .portal-layout {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .portal-hero {
+    padding: 22px 18px !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   20. CONTROL CENTER — authority on all screens
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .control-grid, .control-layout {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .control-sidebar {
+    display: none !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   21. NOTIFICATIONS — triage feed on mobile
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .notif-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .notif-filters {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 0 14px 6px;
+  }
+  .notif-filters::-webkit-scrollbar { display: none; }
+}
+
+/* ------------------------------------------------------------
+   22. COMMAND PALETTE — mobile-safe overlay
+   ------------------------------------------------------------ */
+@media (max-width: 767.98px) {
+  .cmd-overlay { padding-top: 72px !important; }
+  .cmd-box, .cmd-palette {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    left: 10px !important;
+    right: 10px !important;
+    top: 72px !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+  .cmd-input { font-size: 15px; }
+  .cmd-results { max-height: 60vh; }
+}
+
+/* ------------------------------------------------------------
+   23. DIVIDERS / VISUAL RHYTHM — remove when stacked
+   ------------------------------------------------------------ */
+@media (max-width: 767.98px) {
+  .divider-v { display: none; }
+}
+
+/* ------------------------------------------------------------
+   24. SEARCH BAR INSIDE TOPBAR — doesn't shrink into nothing
+   ------------------------------------------------------------ */
+.app-topbar .search-bar {
+  min-width: 200px;
+}
+@media (min-width: 1400px) {
+  .app-topbar .search-bar { min-width: 280px; max-width: 320px; }
+}
+
+/* ------------------------------------------------------------
+   25. SELECT / INPUT — consistent mobile sizing
+   ------------------------------------------------------------ */
+@media (max-width: 767.98px) {
+  select.input, select.input-sm, .input, .input-text {
+    font-size: 13px !important;
+    min-height: 40px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  /* Native select caret: space for arrow */
+  select.input, select.input-sm {
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+}
+
+/* ------------------------------------------------------------
+   26. ANIMATION SAFETY — reduced-motion override
+   (base keyframes defined in v63.css; only reinforce a11y)
+   ------------------------------------------------------------ */
+@keyframes v64FadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.anim-fade {
+  animation: v64FadeIn 220ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-in, .anim-fade, .anim-slide, .anim-scale {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   27. LOADING SKELETON — reusable
+   ------------------------------------------------------------ */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(10, 16, 32, 0.04) 0%,
+    rgba(10, 16, 32, 0.09) 50%,
+    rgba(10, 16, 32, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: v64SkelShimmer 1400ms linear infinite;
+  border-radius: 6px;
+}
+@keyframes v64SkelShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ------------------------------------------------------------
+   28. TOOLTIP — refined shadow
+   ------------------------------------------------------------ */
+.sidebar-nav-item .tooltip {
+  box-shadow:
+    0 0 0 1px rgba(10, 16, 32, 0.08),
+    0 8px 20px -4px rgba(10, 16, 32, 0.24);
+}
+
+/* ------------------------------------------------------------
+   29. ACCESSIBILITY — minimum touch target safety
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-danger {
+    min-height: 38px;
+  }
+  .btn-xs { min-height: 32px; }
+  .btn-icon { min-width: 38px; min-height: 38px; }
+  a, button, [role="button"] { touch-action: manipulation; }
+}
+
+/* Higher-contrast body text on mobile */
+@media (max-width: 767.98px) {
+  .t-body, p { color: var(--graphite-700, #363840); }
+  .t-caption { color: var(--graphite-500, #63656e); }
+}
+
+/* ------------------------------------------------------------
+   30. SAFE-AREA (iOS notch/home indicator)
+   ------------------------------------------------------------ */
+@supports (padding: max(0px)) {
+  .app-content {
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
+  }
+  .mobile-header {
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+  .mobile-drawer {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ------------------------------------------------------------
+   31. PRINT — clean, single-column print output
+   ------------------------------------------------------------ */
+@media print {
+  .app-sidebar, .app-topbar, .mobile-header, .mobile-drawer,
+  .mobile-drawer-backdrop, .cmd-overlay {
+    display: none !important;
+  }
+  .app-body { margin-left: 0 !important; }
+  .app-content { padding: 0 !important; max-width: 100% !important; }
+  .card { box-shadow: none !important; border: 1px solid #e5e7eb !important; break-inside: avoid; }
+}
+
+/* ------------------------------------------------------------
+   32. GLOBAL OVERFLOW SAFETY — last resort enforcement
+   ------------------------------------------------------------ */
+@media (max-width: 1023.98px) {
+  .app-content > *,
+  .app-content .card,
+  .app-content .card > *:not(.overflow-x-auto):not(table):not(.power-table) {
+    max-width: 100%;
+    min-width: 0;
+  }
+  /* Long case/matter names — truncate gracefully */
+  .app-content .cell-primary > .truncate-1,
+  .app-content .t-h3,
+  .app-content .t-h2 {
+    min-width: 0;
+  }
+}
+
+/* ------------------------------------------------------------
+   33. EMPTY STATES — centered, properly spaced
+   ------------------------------------------------------------ */
+.empty-state {
+  text-align: center;
+  padding: 44px 24px;
+  color: var(--graphite-500, #63656e);
+}
+
+/* ------------------------------------------------------------
+   34. KBD (keyboard shortcut pill) — consistent look
+   ------------------------------------------------------------ */
+.kbd {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgba(10, 16, 32, 0.04);
+  border: 1px solid rgba(10, 16, 32, 0.08);
+  box-shadow: inset 0 -1px 0 rgba(10, 16, 32, 0.05);
+  color: var(--graphite-600, #4b4d56);
+  letter-spacing: 0.02em;
+}
+
+/* ------------------------------------------------------------
+   35. NOTIFICATION DOT — never clipped on round icon buttons
+   ------------------------------------------------------------ */
+.notif-dot {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25);
+}
+
+/* ------------------------------------------------------------
+   36. SIDEBAR — subtle active indicator lock
+   ------------------------------------------------------------ */
+.app-sidebar .sidebar-nav-item.active {
+  position: relative;
+}
+.app-sidebar .sidebar-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+  box-shadow: 0 0 12px rgba(96, 165, 250, 0.45);
+}
+
+/* ------------------------------------------------------------
+   37. TOUCH DEVICE REFINEMENT — no hover lift glitches
+   ------------------------------------------------------------ */
+@media (hover: none) {
+  .card.interactive:hover,
+  .card[role="button"]:hover,
+  .dash-stat:hover,
+  .power-table tbody tr:hover {
+    transform: none !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   38. RADIUS CONSISTENCY LOCK
+   ------------------------------------------------------------ */
+.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger {
+  border-radius: 10px;
+}
+.btn-xs, .btn-sm { border-radius: 8px; }
+.card { border-radius: 14px; }
+.input, select.input, textarea.input, .input-text { border-radius: 10px; }
+.filter-chip { border-radius: 999px; }
+
+/* ------------------------------------------------------------
+   39. IMAGE / AVATAR — never crop unintentionally
+   ------------------------------------------------------------ */
+.avatar { flex-shrink: 0; }
+img { max-width: 100%; height: auto; }
+
+/* ------------------------------------------------------------
+   40. FINAL: DATA-NUMERIC RIGHT-ALIGN HEURISTIC
+   ------------------------------------------------------------ */
+.power-table td.align-right,
+.power-table th.align-right {
+  text-align: right;
+}
+
+/* ============================================================
+   END v6.4 FINAL PASS
+   ============================================================ */
