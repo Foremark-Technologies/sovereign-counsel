@@ -4,29 +4,37 @@
 // ============================================
 
 const { useState, useEffect, useRef, useCallback, useMemo, createElement: h, Fragment } = React;
-const API_BASE = 'http://localhost:4000/api/v1';
+const API_BASE = "http://localhost:4000/api/v1";
 
 async function apiRequest(path, options = {}) {
-  const token = localStorage.getItem('accessToken');
-  const headers = {
-    ...(options.headers || {}),
-  };
-  if (!headers.Authorization && token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  console.log("API CALL →", API_BASE + path, options);
+  const token = localStorage.getItem("accessToken");
+
+const res = await fetch("http://localhost:4000/api/v1" + path, {
+  method: options.method || 'GET',
+  headers: {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.headers || {})
+  },
+  body: options.body
+});
+
   const text = await res.text();
-  let payload;
+
+  let data;
   try {
-    payload = JSON.parse(text);
+    data = JSON.parse(text);
   } catch (e) {
-    console.error('Non-JSON response:', text);
-    throw new Error('Server returned HTML instead of JSON');
+    console.error("RAW RESPONSE:", text);
+    throw new Error("Server returned HTML instead of JSON");
   }
+
   if (!res.ok) {
-    throw new Error(payload?.message || 'Request failed');
+    throw new Error(data.message || "Request failed");
   }
-  return payload?.data;
+
+  return data;
 }
 
 function formatDate(value) {
@@ -514,23 +522,28 @@ function LoginPage({ navigate }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
-      const data = await apiRequest('/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: pw }),
+      const res = await fetch("http://localhost:4000/api/v1/auth/login", {
+        method: "POST", // 🔥 THIS IS THE KEY FIX
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email,
+          password: pw
+        })
       });
-
-      // âœ… Save token
-      localStorage.setItem("accessToken", data.accessToken);
-
-      // âœ… Navigate to dashboard
-      navigate("/dashboard");
-
+  
+      const data = await res.json();
+  
+      localStorage.setItem("accessToken", data.data.accessToken);
+  
+      navigate("dashboard");
+  
     } catch (err) {
-      console.error("Login error:", err);
-      alert(err.message);
+      console.error(err);
+      alert("Login failed");
     } finally {
       setLoading(false);
     }
@@ -854,35 +867,29 @@ function DashboardPage({ navigate, onCmdK }) {
     }
   }, [myMatters, hearingForm.matterId]);
 
-  async function handleCreateMatter(formData) {
-    try {
-      await apiRequest('/matters', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      closeMatterModal();
-      await fetchMatters();
-      await fetchDashboard();
-    } catch (err) {
-      alert(err.message);
-    }
-  }
+  async function handleCreateMatter(e) {
+  e.preventDefault();
 
-  async function createHearing() {
-    try {
-      await apiRequest('/matters/hearing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(hearingForm),
-      });
-      alert('Hearing added');
-      setHearingForm((f) => ({ ...f, date: '', court: '' }));
-      await fetchDashboard();
-    } catch (err) {
-      alert(err.message);
-    }
+  try {
+    await apiRequest('/matters', {
+      method: 'POST',
+      body: JSON.stringify({
+        clientName: matterForm.clientName,
+        matterTitle: matterForm.matterTitle,
+        practiceArea: matterForm.practiceArea
+      })
+    });
+
+    alert("Matter created successfully");
+
+    // reload list
+    fetchMatters();
+
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Failed to create matter");
   }
+}
 
   const handleInviteUser = useCallback(async (e) => {
     e.preventDefault();
