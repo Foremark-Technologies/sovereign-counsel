@@ -1,13 +1,12 @@
 import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { MattersService } from './matters.service';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RbacGuard } from 'src/common/guards/rbac.guard';
 import { Permissions } from 'src/common/decorators/permissions.decorator';
 import { AssignMatterUserDto, CreateHearingDto, CreateMatterDto, UpdateMatterDto } from './dto/matter.dto';
 import { ok } from 'src/common/dto/api-response.dto';
 
 @Controller('matters')
-@UseGuards(JwtAuthGuard, RbacGuard)
+@UseGuards(RbacGuard)
 export class MattersController {
   constructor(private readonly mattersService: MattersService) {}
 
