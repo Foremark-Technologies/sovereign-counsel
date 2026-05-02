@@ -6,28 +6,24 @@ const prisma = new PrismaClient();
 
 async function main() {
   try {
-    // Delete existing test data
     await prisma.user.deleteMany({ where: { email: 'test@example.com' } });
     await prisma.role.deleteMany({ where: { name: 'Admin' } });
     await prisma.organization.deleteMany({ where: { name: 'Test Law Firm' } });
 
-    // Create organization
     const org = await prisma.organization.create({
       data: {
         name: 'Test Law Firm',
       },
     });
 
-    // Create role with permissions array (NOT JSON string)
     const role = await prisma.role.create({
       data: {
         organizationId: org.id,
         name: 'Admin',
-        permissions: ['users:read', 'users:create', 'matters:read', 'matters:create', 'dashboard:read'], // Array directly
+        permissions: ['users:read', 'users:create', 'matters:read', 'matters:create', 'dashboard:read'],
       },
     });
 
-    // Create user
     const passwordHash = await bcrypt.hash('password123', 12);
     const user = await prisma.user.create({
       data: {
@@ -41,11 +37,11 @@ async function main() {
       },
     });
 
-    console.log('✅ Test user created!');
-    console.log('📧 Email: test@example.com');
-    console.log('🔑 Password: password123');
+    console.log('Test user created!');
+    console.log('Email: test@example.com');
+    console.log('Password: password123');
   } catch (e) {
-    console.error('❌ Error:', e.message);
+    console.error('Error:', e.message);
   }
 }
 

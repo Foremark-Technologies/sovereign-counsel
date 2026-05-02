@@ -105,7 +105,6 @@ const ROLES = {
 
 async function main() {
   try {
-    // Get or create organization
     let org = await prisma.organization.findFirst({
       where: { name: 'Test Law Firm' },
     });
@@ -114,10 +113,9 @@ async function main() {
       org = await prisma.organization.create({
         data: { name: 'Test Law Firm' },
       });
-      console.log('✅ Organization created');
+      console.log('Organization created');
     }
 
-    // Create/Update roles
     for (const [key, roleData] of Object.entries(ROLES)) {
       await prisma.role.upsert({
         where: {
@@ -136,10 +134,9 @@ async function main() {
           isSystemRole: true,
         },
       });
-      console.log(`✅ Role created: ${roleData.name}`);
+      console.log(`Role created: ${roleData.name}`);
     }
 
-    // Create test admin user
     const adminRole = await prisma.role.findFirst({
       where: { organizationId: org.id, name: 'Admin' },
     });
@@ -164,12 +161,12 @@ async function main() {
       },
     });
 
-    console.log('✅ Admin user created: admin@testfirm.com / password123');
-    console.log('\n📋 Test credentials:');
+    console.log('Admin user created: admin@testfirm.com / password123');
+    console.log('Test credentials:');
     console.log('  Email: admin@testfirm.com');
     console.log('  Password: password123');
   } catch (e) {
-    console.error('❌ Error:', e.message);
+    console.error('Error:', e.message);
   }
 }
 

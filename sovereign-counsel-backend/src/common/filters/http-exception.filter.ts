@@ -32,7 +32,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exception.message;
     }
 
-    console.error('🔥 FULL ERROR:', exception);
+    console.error('FULL ERROR:', exception);
 
     response.status(status).json({
       statusCode: status,
